@@ -1,8 +1,13 @@
 from app.retrieval import JsonVectorStore, build_vector_store
+from app.retrieval.faiss_store import FaissVectorStore
 
 
 def test_build_vector_store_returns_json_backend():
     assert isinstance(build_vector_store("json"), JsonVectorStore)
+
+
+def test_build_vector_store_returns_faiss_backend():
+    assert isinstance(build_vector_store("faiss"), FaissVectorStore)
 
 
 def test_build_vector_store_rejects_unknown_backend():

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     data_dir: Path = Path("data")
     upload_dir: Path = Path("data/raw/uploads")
     index_path: Path = Path("data/processed/vector_index.json")
+    faiss_index_path: Path = Path("data/processed/faiss.index")
 
     embedding_dim: int = 384
     retrieval_top_k: int = 20
