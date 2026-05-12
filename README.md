@@ -35,6 +35,10 @@ The default local setup is lightweight: deterministic hash embeddings, a JSON-ba
 
 ## Architecture
 
+<p align="center">
+  <img src="docs/assets/architecture.png" alt="Vehicle-RAG architecture diagram" />
+</p>
+
 ```text
 Documents
    |
@@ -196,4 +200,3 @@ The container exposes the API on `http://localhost:8001` and mounts `data/` for 
 ## License
 
 MIT
-
