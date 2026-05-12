@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     rerank_top_k: int = 5
     context_max_tokens: int = 3000
     qa_cache_ttl: int = 3600
+    redis_url: str | None = None
 
     llm_base_url: str | None = None
     llm_api_key: str | None = None
@@ -36,4 +37,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-
