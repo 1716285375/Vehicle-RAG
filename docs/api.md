@@ -18,3 +18,10 @@ Multipart form:
 
 返回 SSE 事件: `query_rewritten`, `retrieved`, `reranked`, `token`, `final`, `done`。
 
+## `GET /v1/sessions/{session_id}`
+
+返回指定会话的问答历史。
+
+## `DELETE /v1/sessions/{session_id}`
+
+删除指定会话的本地历史记录。
