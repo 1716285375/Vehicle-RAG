@@ -1,0 +1,2 @@
+"""Vehicle-RAG application package."""
+
