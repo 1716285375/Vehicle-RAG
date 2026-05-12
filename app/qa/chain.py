@@ -62,17 +62,19 @@ class RAGChain:
         yield Event("retrieved", {"count": len(candidates)})
 
         reranked = await self.reranker.rerank(rewritten, candidates, top_k=settings.rerank_top_k)
+        relevant = [item for item in reranked if self._relevance_score(item) >= settings.min_relevance_score]
         yield Event(
             "reranked",
             {
                 "top": [
                     {"id": item.id, "score": item.rerank_score if item.rerank_score else item.score}
                     for item in reranked
-                ]
+                ],
+                "accepted": len(relevant),
             },
         )
 
-        context, citations = self.context_builder.build(reranked, settings.context_max_tokens)
+        context, citations = self.context_builder.build(relevant, settings.context_max_tokens)
         answer_buffer = ""
         async for token in self.llm.stream(question, context):
             answer_buffer += token
@@ -84,3 +86,6 @@ class RAGChain:
 
     def _cache_key(self, question: str, filters: dict[str, Any] | None) -> str:
         return "qa:" + json.dumps({"q": question, "filters": filters or {}}, sort_keys=True, ensure_ascii=False)
+
+    def _relevance_score(self, item) -> float:
+        return float(item.rerank_score if item.rerank_score is not None else item.score)

@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     embedding_dim: int = 384
     retrieval_top_k: int = 20
     rerank_top_k: int = 5
+    min_relevance_score: float = 0.05
     context_max_tokens: int = 3000
     qa_cache_ttl: int = 3600
     redis_url: str | None = None
