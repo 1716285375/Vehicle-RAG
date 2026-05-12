@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Vehicle-RAG logo</title>
+  <desc id="desc">A vehicle silhouette connected to retrieval nodes inside a rounded square.</desc>
+  <rect width="512" height="512" rx="112" fill="#101828"/>
+  <path d="M118 295C118 247.504 156.504 209 204 209H308C355.496 209 394 247.504 394 295V335H118V295Z" fill="#14B8A6"/>
+  <path d="M165 223L188.344 174.642C196.028 158.724 212.137 148.6 229.813 148.6H282.187C299.863 148.6 315.972 158.724 323.656 174.642L347 223H165Z" fill="#38BDF8"/>
+  <path d="M191 236H321L306.3 189.8C303.7 181.629 296.109 176.1 287.533 176.1H224.467C215.891 176.1 208.3 181.629 205.7 189.8L191 236Z" fill="#101828"/>
+  <circle cx="178" cy="337" r="35" fill="#F8FAFC"/>
+  <circle cx="334" cy="337" r="35" fill="#F8FAFC"/>
+  <circle cx="178" cy="337" r="15" fill="#101828"/>
+  <circle cx="334" cy="337" r="15" fill="#101828"/>
+  <path d="M148 279H106C95.5066 279 87 270.493 87 260C87 249.507 95.5066 241 106 241H142C153.046 241 162 249.954 162 261V265C162 272.732 155.732 279 148 279Z" fill="#F8FAFC"/>
+  <path d="M364 279H406C416.493 279 425 270.493 425 260C425 249.507 416.493 241 406 241H370C358.954 241 350 249.954 350 261V265C350 272.732 356.268 279 364 279Z" fill="#F8FAFC"/>
+  <circle cx="149" cy="121" r="14" fill="#38BDF8"/>
+  <circle cx="256" cy="99" r="14" fill="#14B8A6"/>
+  <circle cx="363" cy="121" r="14" fill="#38BDF8"/>
+  <path d="M149 135V165C149 181.569 162.431 195 179 195H198" stroke="#E0F2FE" stroke-width="12" stroke-linecap="round"/>
+  <path d="M256 113V148" stroke="#CCFBF1" stroke-width="12" stroke-linecap="round"/>
+  <path d="M363 135V165C363 181.569 349.569 195 333 195H314" stroke="#E0F2FE" stroke-width="12" stroke-linecap="round"/>
+  <path d="M172 399H340" stroke="#F8FAFC" stroke-width="18" stroke-linecap="round"/>
+</svg>
