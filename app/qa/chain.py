@@ -10,7 +10,7 @@ from app.infra.redis_client import cache
 from app.llm import LLMClient
 from app.qa.context_builder import ContextBuilder
 from app.qa.query_rewriter import QueryRewriter
-from app.retrieval import JsonVectorStore, LightweightReranker
+from app.retrieval import LightweightReranker, VectorStore, build_vector_store
 
 
 @dataclass
@@ -23,12 +23,12 @@ class RAGChain:
     def __init__(
         self,
         embedder: HashEmbedder | None = None,
-        vector_store: JsonVectorStore | None = None,
+        vector_store: VectorStore | None = None,
         reranker: LightweightReranker | None = None,
         llm: LLMClient | None = None,
     ) -> None:
         self.embedder = embedder or HashEmbedder()
-        self.vector_store = vector_store or JsonVectorStore()
+        self.vector_store = vector_store or build_vector_store()
         self.reranker = reranker or LightweightReranker()
         self.llm = llm or LLMClient()
         self.query_rewriter = QueryRewriter()
@@ -84,4 +84,3 @@ class RAGChain:
 
     def _cache_key(self, question: str, filters: dict[str, Any] | None) -> str:
         return "qa:" + json.dumps({"q": question, "filters": filters or {}}, sort_keys=True, ensure_ascii=False)
-
