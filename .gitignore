@@ -116,3 +116,7 @@ dmypy.json
 
 # Custom ignores
 dev.md
+data/processed/
+data/raw/uploads/
+*.index
+*.chunks.json
