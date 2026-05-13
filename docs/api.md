@@ -29,3 +29,13 @@ Multipart form:
 ## `GET /v1/knowledge/documents`
 
 支持 `doc_id`, `doc_type`, `vehicle_model` 查询参数过滤文档列表。
+
+## `POST /v1/knowledge/rebuild`
+
+请求体:
+
+```json
+{"directory":"data/raw","doc_type":"manual","metadata":{"vehicle_model":"L9"}}
+```
+
+清空当前向量索引后批量摄入目录内支持的文档。

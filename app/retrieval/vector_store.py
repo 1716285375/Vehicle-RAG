@@ -26,3 +26,7 @@ class VectorStore(ABC):
     @abstractmethod
     async def list_documents(self) -> list[dict[str, Any]]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def clear(self) -> int:
+        raise NotImplementedError

@@ -1,8 +1,19 @@
-from fastapi import APIRouter, Query
+from pathlib import Path
+from typing import Any
 
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
+
+from app.ingestion.rebuild import rebuild_index
 from app.retrieval import build_vector_store
 
 router = APIRouter()
+
+
+class RebuildRequest(BaseModel):
+    directory: str = Field(min_length=1)
+    doc_type: str = Field(min_length=1)
+    metadata: dict[str, Any] | None = None
 
 
 @router.get("/knowledge/documents")
@@ -27,8 +38,12 @@ async def delete_document(doc_id: str) -> dict:
 
 
 @router.post("/knowledge/rebuild")
-async def rebuild() -> dict:
-    return {"status": "not_implemented", "message": "Use scripts/rebuild_index.py for local rebuilds."}
+async def rebuild(request: RebuildRequest) -> dict:
+    try:
+        result = await rebuild_index(Path(request.directory), request.doc_type, request.metadata)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {"status": "completed", **result}
 
 
 def _matches_document(document: dict, filters: dict[str, str | None]) -> bool:

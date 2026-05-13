@@ -79,6 +79,15 @@ class FaissVectorStore(VectorStore):
             doc["metadata"].update(chunk.metadata)
         return list(docs.values())
 
+    async def clear(self) -> int:
+        chunks = await self._load_chunks()
+        deleted = len(chunks)
+        self._chunks = []
+        self._save_chunks([])
+        if self.index_path.exists():
+            self.index_path.unlink()
+        return deleted
+
     async def _load_chunks(self) -> list[Chunk]:
         if self._chunks is not None:
             return self._chunks

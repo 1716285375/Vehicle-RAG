@@ -1,11 +1,9 @@
 import argparse
 import asyncio
 import json
-from pathlib import Path
 
-from app.config.settings import settings
 from app.ingestion.doc_types import SUPPORTED_DOC_TYPES
-from app.ingestion.pipeline import IngestionPipeline
+from app.ingestion.rebuild import ingest_directory, rebuild_index
 
 
 async def main() -> None:
@@ -16,17 +14,13 @@ async def main() -> None:
     parser.add_argument("--clear", action="store_true")
     args = parser.parse_args()
 
-    if args.clear and settings.index_path.exists():
-        settings.index_path.unlink()
-
-    pipeline = IngestionPipeline()
-    base_metadata = json.loads(args.metadata)
-    supported = {".pdf", ".docx", ".md", ".markdown", ".txt", ".html", ".htm"}
-    for path in sorted(Path(args.dir).rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in supported:
-            continue
-        result = await pipeline.ingest(path, args.doc_type, {**base_metadata, "doc_title": path.stem})
-        print(json.dumps(result, ensure_ascii=False))
+    if args.clear:
+        result = await rebuild_index(args.dir, args.doc_type, json.loads(args.metadata))
+    else:
+        result = await ingest_directory(args.dir, args.doc_type, json.loads(args.metadata))
+    for document in result["documents"]:
+        print(json.dumps(document, ensure_ascii=False))
+    print(json.dumps({"summary": result}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

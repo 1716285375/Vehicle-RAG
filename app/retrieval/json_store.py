@@ -75,6 +75,13 @@ class JsonVectorStore(VectorStore):
             doc["metadata"].update(chunk.metadata)
         return list(docs.values())
 
+    async def clear(self) -> int:
+        chunks = await self._load()
+        deleted = len(chunks)
+        self._chunks = []
+        self._save([])
+        return deleted
+
     async def _load(self) -> list[Chunk]:
         if self._chunks is not None:
             return self._chunks

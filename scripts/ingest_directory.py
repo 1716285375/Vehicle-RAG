@@ -1,10 +1,9 @@
 import argparse
 import asyncio
 import json
-from pathlib import Path
 
 from app.ingestion.doc_types import SUPPORTED_DOC_TYPES
-from app.ingestion.pipeline import IngestionPipeline
+from app.ingestion.rebuild import ingest_directory
 
 
 async def main() -> None:
@@ -14,14 +13,10 @@ async def main() -> None:
     parser.add_argument("--metadata", default="{}")
     args = parser.parse_args()
 
-    base_metadata = json.loads(args.metadata)
-    pipeline = IngestionPipeline()
-    supported = {".pdf", ".docx", ".md", ".markdown", ".txt", ".html", ".htm"}
-    for path in sorted(Path(args.dir).rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in supported:
-            continue
-        result = await pipeline.ingest(path, args.doc_type, {**base_metadata, "doc_title": path.stem})
-        print(json.dumps(result, ensure_ascii=False))
+    result = await ingest_directory(args.dir, args.doc_type, json.loads(args.metadata))
+    for document in result["documents"]:
+        print(json.dumps(document, ensure_ascii=False))
+    print(json.dumps({"summary": result}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
