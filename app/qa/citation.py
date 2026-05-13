@@ -1,3 +1,5 @@
+import re
+
 from app.ingestion.splitters.base import count_tokens
 from app.models import Citation, ScoredChunk
 
@@ -31,3 +33,13 @@ class ContextBuilder:
             used_tokens += chunk_tokens
         return "\n\n".join(context_parts), citations
 
+
+def extract_citation_ids(answer: str) -> set[int]:
+    return {int(match) for match in re.findall(r"\[(\d+)\]", answer)}
+
+
+def bind_answer_citations(answer: str, citations: list[Citation]) -> list[Citation]:
+    cited_ids = extract_citation_ids(answer)
+    if not cited_ids:
+        return []
+    return [citation for citation in citations if citation.id in cited_ids]

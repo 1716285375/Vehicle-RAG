@@ -8,6 +8,7 @@ from app.config.settings import settings
 from app.embedding import CachedEmbedder, HashEmbedder
 from app.infra.redis_client import cache
 from app.llm import LLMClient
+from app.qa.citation import bind_answer_citations
 from app.qa.context_builder import ContextBuilder
 from app.qa.query_rewriter import QueryRewriter
 from app.retrieval import LightweightReranker, VectorStore, build_vector_store
@@ -80,7 +81,8 @@ class RAGChain:
             answer_buffer += token
             yield Event("token", {"token": token})
 
-        result = {"answer": answer_buffer, "citations": [c.model_dump() for c in citations]}
+        bound_citations = bind_answer_citations(answer_buffer, citations)
+        result = {"answer": answer_buffer, "citations": [c.model_dump() for c in bound_citations]}
         await cache.setex(cache_key, ttl=settings.qa_cache_ttl, value=json.dumps(result, ensure_ascii=False))
         yield Event("final", result)
 
