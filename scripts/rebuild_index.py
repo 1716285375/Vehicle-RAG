@@ -4,13 +4,14 @@ import json
 from pathlib import Path
 
 from app.config.settings import settings
+from app.ingestion.doc_types import SUPPORTED_DOC_TYPES
 from app.ingestion.pipeline import IngestionPipeline
 
 
 async def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", required=True, help="Directory containing source documents")
-    parser.add_argument("--doc-type", required=True, choices=["manual", "faq", "trouble_code", "policy"])
+    parser.add_argument("--doc-type", required=True, choices=SUPPORTED_DOC_TYPES)
     parser.add_argument("--metadata", default="{}")
     parser.add_argument("--clear", action="store_true")
     args = parser.parse_args()

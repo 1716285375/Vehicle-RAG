@@ -1,5 +1,6 @@
 from app.ingestion.splitters.heading_splitter import HeadingSplitter
 from app.ingestion.splitters.semantic_splitter import FAQSplitter, TroubleCodeSplitter
+from app.ingestion.splitters.strategy import SplitterRouter
 from app.models import Page
 
 
@@ -22,3 +23,11 @@ def test_trouble_code_splitter_sets_code():
     chunks = TroubleCodeSplitter().split(pages, {"doc_id": "d1"})
     assert chunks[0].metadata["code"] == "P0301"
 
+
+def test_splitter_router_rejects_unknown_doc_type():
+    try:
+        SplitterRouter().get("unknown")
+    except ValueError as exc:
+        assert "Unsupported doc_type" in str(exc)
+    else:
+        raise AssertionError("Expected ValueError")

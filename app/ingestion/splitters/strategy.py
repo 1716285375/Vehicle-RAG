@@ -2,6 +2,7 @@ from app.ingestion.splitters.base import BaseSplitter
 from app.ingestion.splitters.fixed_window import FixedWindowSplitter
 from app.ingestion.splitters.heading_splitter import HeadingSplitter
 from app.ingestion.splitters.semantic_splitter import FAQSplitter, TroubleCodeSplitter
+from app.ingestion.doc_types import validate_doc_type
 
 
 class SplitterRouter:
@@ -14,5 +15,4 @@ class SplitterRouter:
         }
 
     def get(self, doc_type: str) -> BaseSplitter:
-        return self.strategies.get(doc_type, self.strategies["policy"])
-
+        return self.strategies[validate_doc_type(doc_type)]

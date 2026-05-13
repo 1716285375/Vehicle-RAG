@@ -2,7 +2,7 @@ import json
 import shutil
 from pathlib import Path
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from app.config.settings import settings
 from app.ingestion.pipeline import IngestionPipeline
@@ -21,5 +21,7 @@ async def ingest(
     with target.open("wb") as output:
         shutil.copyfileobj(file.file, output)
     parsed_metadata = json.loads(metadata) if metadata else {}
-    return await IngestionPipeline().ingest(target, doc_type=doc_type, metadata=parsed_metadata)
-
+    try:
+        return await IngestionPipeline().ingest(target, doc_type=doc_type, metadata=parsed_metadata)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc

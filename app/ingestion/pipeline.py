@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from app.embedding import CachedEmbedder, HashEmbedder
 from app.ingestion.cleaners import DocumentCleaner
+from app.ingestion.doc_types import validate_doc_type
 from app.ingestion.loaders import LoaderFactory
 from app.ingestion.processed_writer import ProcessedChunkWriter
 from app.ingestion.splitters import SplitterRouter
@@ -31,6 +32,7 @@ class IngestionPipeline:
         self, file_path: str | Path, doc_type: str, metadata: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         path = Path(file_path)
+        doc_type = validate_doc_type(doc_type)
         metadata = dict(metadata or {})
         doc_id = str(metadata.get("doc_id") or uuid4())
         base_metadata = {

@@ -3,13 +3,14 @@ import asyncio
 import json
 from pathlib import Path
 
+from app.ingestion.doc_types import SUPPORTED_DOC_TYPES
 from app.ingestion.pipeline import IngestionPipeline
 
 
 async def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", required=True, help="Directory containing source documents")
-    parser.add_argument("--doc-type", required=True, choices=["manual", "faq", "trouble_code", "policy"])
+    parser.add_argument("--doc-type", required=True, choices=SUPPORTED_DOC_TYPES)
     parser.add_argument("--metadata", default="{}")
     args = parser.parse_args()
 
@@ -25,4 +26,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-
