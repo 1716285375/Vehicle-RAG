@@ -2,6 +2,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from app.ingestion.loaders.base import BaseLoader
+from app.ingestion.loaders.text_utils import read_text_with_fallback
 from app.models import Page
 
 
@@ -19,7 +20,7 @@ class _TextHTMLParser(HTMLParser):
 class HTMLLoader(BaseLoader):
     async def load(self, file_path: Path) -> list[Page]:
         parser = _TextHTMLParser()
-        parser.feed(file_path.read_text(encoding="utf-8", errors="ignore"))
+        parser.feed(read_text_with_fallback(file_path))
         return [
             Page(
                 page_number=1,
@@ -27,4 +28,3 @@ class HTMLLoader(BaseLoader):
                 metadata={"source": str(file_path)},
             )
         ]
-
