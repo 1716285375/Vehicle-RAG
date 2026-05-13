@@ -5,6 +5,7 @@ from uuid import uuid4
 from app.embedding import CachedEmbedder, HashEmbedder
 from app.ingestion.cleaners import DocumentCleaner
 from app.ingestion.loaders import LoaderFactory
+from app.ingestion.processed_writer import ProcessedChunkWriter
 from app.ingestion.splitters import SplitterRouter
 from app.retrieval import VectorStore, build_vector_store
 
@@ -17,12 +18,14 @@ class IngestionPipeline:
         splitter_router: SplitterRouter | None = None,
         embedder: HashEmbedder | None = None,
         vector_store: VectorStore | None = None,
+        processed_writer: ProcessedChunkWriter | None = None,
     ) -> None:
         self.loader_factory = loader_factory or LoaderFactory()
         self.cleaner = cleaner or DocumentCleaner()
         self.splitter_router = splitter_router or SplitterRouter()
         self.embedder = embedder or CachedEmbedder(HashEmbedder())
         self.vector_store = vector_store or build_vector_store()
+        self.processed_writer = processed_writer or ProcessedChunkWriter()
 
     async def ingest(
         self, file_path: str | Path, doc_type: str, metadata: dict[str, Any] | None = None
@@ -45,4 +48,10 @@ class IngestionPipeline:
         for chunk, embedding in zip(chunks, embeddings):
             chunk.embedding = embedding
         await self.vector_store.upsert(chunks)
-        return {"doc_id": doc_id, "ingested": len(chunks), "doc_title": base_metadata["doc_title"]}
+        processed_path = self.processed_writer.write(doc_id, chunks)
+        return {
+            "doc_id": doc_id,
+            "ingested": len(chunks),
+            "doc_title": base_metadata["doc_title"],
+            "processed_path": str(processed_path),
+        }

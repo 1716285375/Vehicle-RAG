@@ -3,6 +3,7 @@
 当前实现是本地 MVP:
 
 - ingestion: loader -> cleaner -> splitter -> embedding -> JSON vector store
+- processed output: cleaned chunks are written as JSONL under `data/processed/chunks`
 - retrieval: vector recall -> lightweight rerank -> context assembly
 - hallucination guard: low relevance results are dropped before context assembly
 - qa: extractive fallback LLM or OpenAI-compatible chat completion endpoint

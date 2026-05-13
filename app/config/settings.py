@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     data_dir: Path = Path("data")
     upload_dir: Path = Path("data/raw/uploads")
+    processed_dir: Path = Path("data/processed")
     index_path: Path = Path("data/processed/vector_index.json")
     faiss_index_path: Path = Path("data/processed/faiss.index")
     session_store_path: Path = Path("data/processed/sessions.json")
