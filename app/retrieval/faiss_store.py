@@ -7,6 +7,7 @@ import numpy as np
 from app.config.settings import settings
 from app.models import Chunk, ScoredChunk
 from app.retrieval.filter import match_filters
+from app.retrieval.hybrid import bm25_scores, reciprocal_rank_fusion
 from app.retrieval.vector_store import VectorStore
 
 
@@ -26,7 +27,11 @@ class FaissVectorStore(VectorStore):
         self._save_faiss_index(merged)
 
     async def search(
-        self, query_vec: list[float], top_k: int, filters: dict[str, Any] | None = None
+        self,
+        query_vec: list[float],
+        top_k: int,
+        filters: dict[str, Any] | None = None,
+        query_text: str | None = None,
     ) -> list[ScoredChunk]:
         chunks = [chunk for chunk in await self._load_chunks() if match_filters(chunk.metadata, filters)]
         if not chunks:
@@ -37,9 +42,13 @@ class FaissVectorStore(VectorStore):
             dtype=np.float32,
         )
         scores = matrix @ query
-        order = np.argsort(scores)[::-1][:top_k]
+        rank_scores = scores.tolist()
+        if query_text:
+            lexical_scores = bm25_scores(query_text, [chunk.text for chunk in chunks])
+            rank_scores = reciprocal_rank_fusion(rank_scores, lexical_scores)
+        order = np.argsort(np.asarray(rank_scores))[::-1][:top_k]
         return [
-            ScoredChunk(**chunks[index].model_dump(), score=float(scores[index]))
+            ScoredChunk(**chunks[index].model_dump(), score=float(rank_scores[index]))
             for index in order
         ]
 

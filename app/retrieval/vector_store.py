@@ -11,7 +11,11 @@ class VectorStore(ABC):
 
     @abstractmethod
     async def search(
-        self, query_vec: list[float], top_k: int, filters: dict[str, Any] | None = None
+        self,
+        query_vec: list[float],
+        top_k: int,
+        filters: dict[str, Any] | None = None,
+        query_text: str | None = None,
     ) -> list[ScoredChunk]:
         raise NotImplementedError
 
@@ -22,4 +26,3 @@ class VectorStore(ABC):
     @abstractmethod
     async def list_documents(self) -> list[dict[str, Any]]:
         raise NotImplementedError
-

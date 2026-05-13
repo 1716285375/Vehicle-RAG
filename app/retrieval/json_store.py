@@ -7,6 +7,7 @@ import numpy as np
 from app.config.settings import settings
 from app.models import Chunk, ScoredChunk
 from app.retrieval.filter import match_filters
+from app.retrieval.hybrid import bm25_scores, reciprocal_rank_fusion
 from app.retrieval.vector_store import VectorStore
 
 
@@ -23,11 +24,16 @@ class JsonVectorStore(VectorStore):
         self._save(merged)
 
     async def search(
-        self, query_vec: list[float], top_k: int, filters: dict[str, Any] | None = None
+        self,
+        query_vec: list[float],
+        top_k: int,
+        filters: dict[str, Any] | None = None,
+        query_text: str | None = None,
     ) -> list[ScoredChunk]:
         chunks = [chunk for chunk in await self._load() if match_filters(chunk.metadata, filters)]
         query = np.asarray(query_vec, dtype=np.float32)
         results: list[ScoredChunk] = []
+        vector_scores: list[float] = []
         for chunk in chunks:
             if not chunk.embedding:
                 continue
@@ -35,6 +41,12 @@ class JsonVectorStore(VectorStore):
             denom = float(np.linalg.norm(query) * np.linalg.norm(vector))
             score = float(np.dot(query, vector) / denom) if denom else 0.0
             results.append(ScoredChunk(**chunk.model_dump(), score=score))
+            vector_scores.append(score)
+        if query_text and results:
+            lexical_scores = bm25_scores(query_text, [item.text for item in results])
+            fused_scores = reciprocal_rank_fusion(vector_scores, lexical_scores)
+            for item, fused_score in zip(results, fused_scores):
+                item.score = fused_score
         return sorted(results, key=lambda item: item.score, reverse=True)[:top_k]
 
     async def delete(self, doc_id: str) -> int:
@@ -77,4 +89,3 @@ class JsonVectorStore(VectorStore):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         payload = {"chunks": [chunk.model_dump() for chunk in chunks]}
         self.path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-

@@ -57,7 +57,7 @@ class RAGChain:
 
         query_vec = await self.embedder.embed(rewritten)
         candidates = await self.vector_store.search(
-            query_vec, top_k=settings.retrieval_top_k, filters=filters
+            query_vec, top_k=settings.retrieval_top_k, filters=filters, query_text=rewritten
         )
         yield Event("retrieved", {"count": len(candidates)})
 
