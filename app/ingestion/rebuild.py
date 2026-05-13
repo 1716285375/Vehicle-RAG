@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 
+from app.ingestion.doc_types import validate_doc_type
 from app.ingestion.pipeline import IngestionPipeline
 from app.retrieval import VectorStore, build_vector_store
 
@@ -16,6 +17,7 @@ async def ingest_directory(
     root = Path(directory)
     if not root.exists() or not root.is_dir():
         raise ValueError(f"Directory does not exist: {root}")
+    doc_type = validate_doc_type(doc_type)
 
     pipeline = pipeline or IngestionPipeline()
     base_metadata = dict(metadata or {})
@@ -40,6 +42,7 @@ async def rebuild_index(
     metadata: dict[str, Any] | None = None,
     vector_store: VectorStore | None = None,
 ) -> dict[str, Any]:
+    doc_type = validate_doc_type(doc_type)
     store = vector_store or build_vector_store()
     deleted_chunks = await store.clear()
     pipeline = IngestionPipeline(vector_store=store)
