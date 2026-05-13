@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from app.embedding import HashEmbedder
+from app.embedding import CachedEmbedder, HashEmbedder
 from app.ingestion.cleaners import DocumentCleaner
 from app.ingestion.loaders import LoaderFactory
 from app.ingestion.splitters import SplitterRouter
@@ -21,7 +21,7 @@ class IngestionPipeline:
         self.loader_factory = loader_factory or LoaderFactory()
         self.cleaner = cleaner or DocumentCleaner()
         self.splitter_router = splitter_router or SplitterRouter()
-        self.embedder = embedder or HashEmbedder()
+        self.embedder = embedder or CachedEmbedder(HashEmbedder())
         self.vector_store = vector_store or build_vector_store()
 
     async def ingest(

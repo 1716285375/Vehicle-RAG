@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     min_relevance_score: float = 0.05
     context_max_tokens: int = 3000
     qa_cache_ttl: int = 3600
+    embedding_cache_ttl: int = 86400
     redis_url: str | None = None
 
     llm_base_url: str | None = None

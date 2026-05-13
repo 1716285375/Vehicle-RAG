@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.config.settings import settings
-from app.embedding import HashEmbedder
+from app.embedding import CachedEmbedder, HashEmbedder
 from app.infra.redis_client import cache
 from app.llm import LLMClient
 from app.qa.context_builder import ContextBuilder
@@ -27,7 +27,7 @@ class RAGChain:
         reranker: LightweightReranker | None = None,
         llm: LLMClient | None = None,
     ) -> None:
-        self.embedder = embedder or HashEmbedder()
+        self.embedder = embedder or CachedEmbedder(HashEmbedder())
         self.vector_store = vector_store or build_vector_store()
         self.reranker = reranker or LightweightReranker()
         self.llm = llm or LLMClient()
