@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     qa_cache_ttl: int = 3600
     embedding_cache_ttl: int = 86400
     redis_url: str | None = None
+    mysql_dsn: str | None = None
 
     llm_base_url: str | None = None
     llm_api_key: str | None = None

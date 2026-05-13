@@ -1,5 +1,13 @@
 # API
 
+## `GET /health`
+
+返回服务健康状态。
+
+## `GET /health/db`
+
+返回可选数据库后端健康状态。未配置 MySQL 时使用本地 no-op 后端并返回 `ok: true`。
+
 ## `POST /v1/ingest`
 
 Multipart form:
