@@ -26,6 +26,7 @@ Multipart form:
 
 返回 SSE 事件: `query_rewritten`, `retrieved`, `reranked`, `token`, `final`, `done`。
 `final` 事件和同步问答响应包含 `cached` 字段,用于标识是否命中问答缓存。
+问题中的故障码和车型会自动提取为检索过滤条件,并通过 `query_filters` SSE 事件返回。
 
 ## `GET /v1/sessions/{session_id}`
 

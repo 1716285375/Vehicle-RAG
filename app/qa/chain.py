@@ -10,6 +10,7 @@ from app.infra.redis_client import cache
 from app.llm import LLMClient
 from app.qa.citation import bind_answer_citations
 from app.qa.context_builder import ContextBuilder
+from app.qa.filter_extractor import extract_query_filters, merge_filters
 from app.qa.query_rewriter import QueryRewriter
 from app.retrieval import LightweightReranker, VectorStore, build_vector_store
 
@@ -48,7 +49,8 @@ class RAGChain:
     async def stream_events(
         self, question: str, filters: dict[str, Any] | None = None
     ) -> AsyncIterator[Event]:
-        cache_key = self._cache_key(question, filters)
+        effective_filters = merge_filters(filters, extract_query_filters(question))
+        cache_key = self._cache_key(question, effective_filters)
         if cached := await cache.get(cache_key):
             result = json.loads(cached)
             result["cached"] = True
@@ -57,10 +59,12 @@ class RAGChain:
 
         rewritten = await self.query_rewriter.rewrite(question)
         yield Event("query_rewritten", {"original": question, "rewritten": rewritten})
+        if effective_filters:
+            yield Event("query_filters", effective_filters)
 
         query_vec = await self.embedder.embed(rewritten)
         candidates = await self.vector_store.search(
-            query_vec, top_k=settings.retrieval_top_k, filters=filters, query_text=rewritten
+            query_vec, top_k=settings.retrieval_top_k, filters=effective_filters, query_text=rewritten
         )
         yield Event("retrieved", {"count": len(candidates)})
 
