@@ -5,6 +5,7 @@
 - ingestion: loader -> cleaner -> splitter -> embedding -> JSON vector store
 - processed output: cleaned chunks are written as JSONL under `data/processed/chunks`
 - retrieval: vector recall -> lightweight rerank -> context assembly
+- vector stores: local JSON, FAISS-compatible persistence, and optional Milvus backend
 - hallucination guard: low relevance results are dropped before context assembly
 - evaluation: JSONL test sets can report citation and keyword hit rates
 - citations: final responses only include sources referenced by answer markers

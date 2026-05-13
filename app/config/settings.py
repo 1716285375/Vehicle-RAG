@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     llm_timeout: float = 60.0
 
     vector_store: str = Field(default="json", description="json | faiss | milvus")
+    milvus_host: str = "localhost"
+    milvus_port: int = 19530
+    milvus_collection: str = "vehicle_kb"
 
 
 @lru_cache

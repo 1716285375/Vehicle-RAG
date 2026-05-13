@@ -31,6 +31,7 @@ faiss = ["faiss-cpu>=1.8"]
 bge = ["FlagEmbedding>=1.2"]
 redis = ["redis>=5.0"]
 mysql = ["sqlalchemy>=2.0", "aiomysql>=0.2"]
+milvus = ["pymilvus>=2.3"]
 
 [tool.setuptools.packages.find]
 include = ["app*"]
