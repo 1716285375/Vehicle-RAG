@@ -5,11 +5,15 @@ from app.api.knowledge import router as knowledge_router
 from app.api.qa import router as qa_router
 from app.api.session import router as session_router
 from app.config.settings import settings
+from app.infra.logger import configure_logging
 from app.infra.mysql_client import database
+from app.infra.request_logging import RequestLoggingMiddleware
 
 
 def create_app() -> FastAPI:
+    configure_logging()
     app = FastAPI(title=settings.app_name, version="0.1.0")
+    app.add_middleware(RequestLoggingMiddleware)
     app.include_router(qa_router, prefix="/v1", tags=["qa"])
     app.include_router(ingest_router, prefix="/v1", tags=["ingest"])
     app.include_router(knowledge_router, prefix="/v1", tags=["knowledge"])

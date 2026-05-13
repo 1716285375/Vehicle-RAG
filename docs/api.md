@@ -3,6 +3,7 @@
 ## `GET /health`
 
 返回服务健康状态。
+所有 HTTP 响应都会包含 `X-Request-ID` 响应头,可传入同名请求头进行链路追踪。
 
 ## `GET /health/db`
 
