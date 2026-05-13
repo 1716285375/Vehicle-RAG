@@ -17,6 +17,7 @@ Multipart form:
 ## `POST /v1/qa/stream`
 
 返回 SSE 事件: `query_rewritten`, `retrieved`, `reranked`, `token`, `final`, `done`。
+`final` 事件和同步问答响应包含 `cached` 字段,用于标识是否命中问答缓存。
 
 ## `GET /v1/sessions/{session_id}`
 

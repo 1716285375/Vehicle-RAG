@@ -50,7 +50,9 @@ class RAGChain:
     ) -> AsyncIterator[Event]:
         cache_key = self._cache_key(question, filters)
         if cached := await cache.get(cache_key):
-            yield Event("final", json.loads(cached))
+            result = json.loads(cached)
+            result["cached"] = True
+            yield Event("final", result)
             return
 
         rewritten = await self.query_rewriter.rewrite(question)
@@ -82,7 +84,11 @@ class RAGChain:
             yield Event("token", {"token": token})
 
         bound_citations = bind_answer_citations(answer_buffer, citations)
-        result = {"answer": answer_buffer, "citations": [c.model_dump() for c in bound_citations]}
+        result = {
+            "answer": answer_buffer,
+            "citations": [c.model_dump() for c in bound_citations],
+            "cached": False,
+        }
         await cache.setex(cache_key, ttl=settings.qa_cache_ttl, value=json.dumps(result, ensure_ascii=False))
         yield Event("final", result)
 
