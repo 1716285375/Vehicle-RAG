@@ -6,6 +6,7 @@
 - processed output: cleaned chunks are written as JSONL under `data/processed/chunks`
 - retrieval: vector recall -> lightweight rerank -> context assembly
 - hallucination guard: low relevance results are dropped before context assembly
+- evaluation: JSONL test sets can report citation and keyword hit rates
 - qa: extractive fallback LLM or OpenAI-compatible chat completion endpoint
 - api: FastAPI `/v1/ingest`, `/v1/qa`, `/v1/qa/stream`, `/v1/knowledge/documents`
 
