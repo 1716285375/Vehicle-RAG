@@ -186,7 +186,13 @@ python scripts/evaluate_rag.py --file data/eval/questions.jsonl
 docker compose -f docker/docker-compose.yml up --build
 ```
 
-The container exposes the API on `http://localhost:8001` and mounts `data/` for local persistence.
+The default stack starts the API, Redis, and MySQL, exposes the API on `http://localhost:8001`, and mounts `data/` for local persistence.
+
+Milvus is available as an optional profile:
+
+```bash
+docker compose -f docker/docker-compose.yml --profile milvus up --build
+```
 
 ## Roadmap
 
