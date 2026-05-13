@@ -25,3 +25,7 @@ Multipart form:
 ## `DELETE /v1/sessions/{session_id}`
 
 删除指定会话的本地历史记录。
+
+## `GET /v1/knowledge/documents`
+
+支持 `doc_id`, `doc_type`, `vehicle_model` 查询参数过滤文档列表。
