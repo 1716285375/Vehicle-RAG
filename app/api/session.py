@@ -5,6 +5,11 @@ from app.infra.session_store import session_store
 router = APIRouter()
 
 
+@router.get("/sessions")
+async def list_sessions() -> dict:
+    return {"sessions": await session_store.list_sessions()}
+
+
 @router.get("/sessions/{session_id}")
 async def get_session(session_id: str) -> dict:
     turns = await session_store.get(session_id)

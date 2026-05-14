@@ -19,6 +19,30 @@ class JsonSessionStore:
     async def get(self, session_id: str) -> list[SessionTurn]:
         return [turn for turn in await self._load() if turn.session_id == session_id]
 
+    async def list_sessions(self) -> list[dict]:
+        sessions: dict[str, dict] = {}
+        for turn in await self._load():
+            item = sessions.setdefault(
+                turn.session_id,
+                {
+                    "session_id": turn.session_id,
+                    "turn_count": 0,
+                    "latest_question": "",
+                    "updated_at": turn.created_at,
+                },
+            )
+            item["turn_count"] += 1
+            if turn.created_at >= item["updated_at"]:
+                item["latest_question"] = turn.question
+                item["updated_at"] = turn.created_at
+        return [
+            {
+                **item,
+                "updated_at": item["updated_at"].isoformat(),
+            }
+            for item in sorted(sessions.values(), key=lambda value: value["updated_at"], reverse=True)
+        ]
+
     async def delete(self, session_id: str) -> int:
         turns = await self._load()
         kept = [turn for turn in turns if turn.session_id != session_id]

@@ -33,6 +33,10 @@ Multipart form:
 
 返回指定会话的问答历史。
 
+## `GET /v1/sessions`
+
+返回本地会话摘要列表,包含会话 ID、轮数、最近问题和更新时间。
+
 ## `DELETE /v1/sessions/{session_id}`
 
 删除指定会话的本地历史记录。
