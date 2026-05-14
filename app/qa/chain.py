@@ -46,6 +46,35 @@ class RAGChain:
         final["latency_ms"] = int((time.perf_counter() - started) * 1000)
         return final
 
+    async def retrieve_debug(
+        self, question: str, filters: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        effective_filters = merge_filters(filters, extract_query_filters(question))
+        rewritten = await self.query_rewriter.rewrite(question)
+        query_vec = await self.embedder.embed(rewritten)
+        candidates = await self.vector_store.search(
+            query_vec,
+            top_k=settings.retrieval_top_k,
+            filters=effective_filters,
+            query_text=rewritten,
+        )
+        reranked = await self.reranker.rerank(rewritten, candidates, top_k=settings.rerank_top_k)
+        return {
+            "question": question,
+            "rewritten": rewritten,
+            "filters": effective_filters,
+            "candidates": [
+                {
+                    "id": item.id,
+                    "text": item.text[:300],
+                    "metadata": item.metadata,
+                    "score": item.score,
+                    "rerank_score": item.rerank_score,
+                }
+                for item in reranked
+            ],
+        }
+
     async def stream_events(
         self, question: str, filters: dict[str, Any] | None = None
     ) -> AsyncIterator[Event]:

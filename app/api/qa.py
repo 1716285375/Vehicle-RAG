@@ -33,6 +33,11 @@ async def qa(request: QARequest) -> dict:
     return result
 
 
+@router.post("/qa/retrieve")
+async def retrieve(request: QARequest) -> dict:
+    return await RAGChain().retrieve_debug(request.question, request.filters)
+
+
 @router.post("/qa/stream")
 async def qa_stream(request: QARequest) -> StreamingResponse:
     async def events():

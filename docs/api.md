@@ -29,6 +29,10 @@ Multipart form:
 `final` 事件和同步问答响应包含 `cached` 字段,用于标识是否命中问答缓存。
 问题中的故障码和车型会自动提取为检索过滤条件,并通过 `query_filters` SSE 事件返回。
 
+## `POST /v1/qa/retrieve`
+
+只执行查询改写、召回和重排,返回候选片段、metadata 和分数,用于调试检索效果。
+
 ## `GET /v1/sessions/{session_id}`
 
 返回指定会话的问答历史。
