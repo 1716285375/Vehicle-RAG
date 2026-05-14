@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     rerank_top_k: int = 5
     min_relevance_score: float = 0.05
     context_max_tokens: int = 3000
+    context_min_chunk_tokens: int = 80
     qa_cache_ttl: int = 3600
     embedding_cache_ttl: int = 86400
     redis_url: str | None = None

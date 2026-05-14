@@ -81,7 +81,11 @@ class RAGChain:
             },
         )
 
-        context, citations = self.context_builder.build(relevant, settings.context_max_tokens)
+        context, citations = self.context_builder.build(
+            relevant,
+            settings.context_max_tokens,
+            settings.context_min_chunk_tokens,
+        )
         answer_buffer = ""
         async for token in self.llm.stream(question, context):
             answer_buffer += token
