@@ -4,14 +4,11 @@ from collections.abc import AsyncIterator
 import httpx
 
 from app.config.settings import settings
+from app.qa.prompt_templates import build_qa_messages
 
 
 def build_chat_messages(question: str, context: str) -> list[dict[str, str]]:
-    prompt = f"【参考资料】\n{context}\n\n【用户问题】\n{question}\n\n【回答】"
-    return [
-        {"role": "system", "content": "你是车载智能助手,只能基于参考资料回答。"},
-        {"role": "user", "content": prompt},
-    ]
+    return build_qa_messages(question=question, context=context)
 
 
 def parse_openai_sse_token(line: str) -> str | None:
