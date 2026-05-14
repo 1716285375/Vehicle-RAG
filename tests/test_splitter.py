@@ -22,6 +22,20 @@ def test_trouble_code_splitter_sets_code():
     pages = [Page(page_number=1, text="P0301 | 第1缸失火 | 检查点火系统")]
     chunks = TroubleCodeSplitter().split(pages, {"doc_id": "d1"})
     assert chunks[0].metadata["code"] == "P0301"
+    assert chunks[0].metadata["description"] == "第1缸失火"
+    assert chunks[0].metadata["action"] == "检查点火系统"
+
+
+def test_trouble_code_splitter_skips_markdown_table_header():
+    pages = [
+        Page(
+            page_number=1,
+            text="| code | description | action |\n| --- | --- | --- |\n| P0301 | 第1缸失火 | 检查点火系统 |",
+        )
+    ]
+    chunks = TroubleCodeSplitter().split(pages, {"doc_id": "d1"})
+    assert len(chunks) == 1
+    assert chunks[0].metadata["code"] == "P0301"
 
 
 def test_splitter_router_rejects_unknown_doc_type():
