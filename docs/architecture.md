@@ -12,6 +12,7 @@
 - citations: final responses only include sources referenced by answer markers
 - prompts: system and QA prompts are loaded from template files under `app/qa/prompts`
 - context budget: oversized chunks are clipped before prompt assembly
+- query rewrite: local synonym rewriting can be upgraded to LLM-based rewriting via configuration
 - qa: extractive fallback LLM or OpenAI-compatible chat completion endpoint
 - api: FastAPI `/v1/ingest`, `/v1/qa`, `/v1/qa/stream`, `/v1/knowledge/documents`
 

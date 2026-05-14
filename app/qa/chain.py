@@ -33,7 +33,7 @@ class RAGChain:
         self.vector_store = vector_store or build_vector_store()
         self.reranker = reranker or LightweightReranker()
         self.llm = llm or LLMClient()
-        self.query_rewriter = QueryRewriter()
+        self.query_rewriter = QueryRewriter(llm=self.llm)
         self.context_builder = ContextBuilder()
 
     async def answer(self, question: str, filters: dict[str, Any] | None = None) -> dict[str, Any]:

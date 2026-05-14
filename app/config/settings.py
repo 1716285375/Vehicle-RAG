@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     llm_api_key: str | None = None
     llm_model: str = "qwen-max"
     llm_timeout: float = 60.0
+    enable_llm_query_rewrite: bool = False
 
     vector_store: str = Field(default="json", description="json | faiss | milvus")
     milvus_host: str = "localhost"
