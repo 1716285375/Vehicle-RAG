@@ -82,6 +82,18 @@ class JsonVectorStore(VectorStore):
         self._save([])
         return deleted
 
+    async def export_chunks(self) -> list[dict[str, Any]]:
+        return [chunk.model_dump() for chunk in await self._load()]
+
+    async def import_chunks(self, rows: list[dict[str, Any]], replace: bool = False) -> int:
+        chunks = [Chunk(**row) for row in rows]
+        if replace:
+            self._chunks = chunks
+            self._save(chunks)
+            return len(chunks)
+        await self.upsert(chunks)
+        return len(chunks)
+
     async def _load(self) -> list[Chunk]:
         if self._chunks is not None:
             return self._chunks

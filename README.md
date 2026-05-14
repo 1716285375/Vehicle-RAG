@@ -180,6 +180,13 @@ Evaluate a JSONL question set:
 python scripts/evaluate_rag.py --file data/eval/questions.jsonl
 ```
 
+Export or import a local JSON index:
+
+```bash
+python scripts/export_index.py --output data/processed/index-backup.json
+python scripts/import_index.py --input data/processed/index-backup.json --replace
+```
+
 ## Docker
 
 ```bash
