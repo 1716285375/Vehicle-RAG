@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.config.settings import settings
-from app.embedding import CachedEmbedder, HashEmbedder
+from app.embedding import HashEmbedder, build_embedder
 from app.infra.redis_client import cache
 from app.llm import LLMClient
 from app.qa.citation import bind_answer_citations
@@ -29,7 +29,7 @@ class RAGChain:
         reranker: LightweightReranker | None = None,
         llm: LLMClient | None = None,
     ) -> None:
-        self.embedder = embedder or CachedEmbedder(HashEmbedder())
+        self.embedder = embedder or build_embedder()
         self.vector_store = vector_store or build_vector_store()
         self.reranker = reranker or LightweightReranker()
         self.llm = llm or LLMClient()

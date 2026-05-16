@@ -14,6 +14,11 @@ def test_settings_rejects_unknown_vector_store():
         Settings(vector_store="sqlite")
 
 
+def test_settings_rejects_unknown_embedding_provider():
+    with pytest.raises(ValidationError, match="unsupported embedding provider"):
+        Settings(embedding_provider="unknown")
+
+
 def test_settings_rejects_non_positive_runtime_values():
     with pytest.raises(ValidationError, match="must be greater than 0"):
         Settings(retrieval_top_k=0)

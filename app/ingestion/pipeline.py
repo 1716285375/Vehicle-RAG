@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from app.embedding import CachedEmbedder, HashEmbedder
+from app.embedding import HashEmbedder, build_embedder
 from app.ingestion.cleaners import DocumentCleaner
 from app.ingestion.doc_types import validate_doc_type
 from app.ingestion.loaders import LoaderFactory
@@ -24,7 +24,7 @@ class IngestionPipeline:
         self.loader_factory = loader_factory or LoaderFactory()
         self.cleaner = cleaner or DocumentCleaner()
         self.splitter_router = splitter_router or SplitterRouter()
-        self.embedder = embedder or CachedEmbedder(HashEmbedder())
+        self.embedder = embedder or build_embedder()
         self.vector_store = vector_store or build_vector_store()
         self.processed_writer = processed_writer or ProcessedChunkWriter()
 

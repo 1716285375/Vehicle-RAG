@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     faiss_index_path: Path = Path("data/processed/faiss.index")
     session_store_path: Path = Path("data/processed/sessions.json")
 
+    embedding_provider: str = "hash"
+    embed_model_path: str = "BAAI/bge-m3"
+    embed_device: str = "cpu"
+    embed_batch_size: int = 32
     embedding_dim: int = 384
     retrieval_top_k: int = 20
     rerank_top_k: int = 5
@@ -45,6 +49,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "app_port",
+        "embed_batch_size",
         "embedding_dim",
         "retrieval_top_k",
         "rerank_top_k",
@@ -81,6 +86,14 @@ class Settings(BaseSettings):
         if normalized not in SUPPORTED_VECTOR_STORES:
             allowed = ", ".join(sorted(SUPPORTED_VECTOR_STORES))
             raise ValueError(f"unsupported vector store '{value}', expected one of: {allowed}")
+        return normalized
+
+    @field_validator("embedding_provider")
+    @classmethod
+    def _normalize_embedding_provider(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if normalized not in {"hash", "bge-m3"}:
+            raise ValueError("unsupported embedding provider, expected one of: hash, bge-m3")
         return normalized
 
     @model_validator(mode="after")
