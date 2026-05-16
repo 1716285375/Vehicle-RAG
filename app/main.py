@@ -9,6 +9,7 @@ from app.config.settings import settings
 from app.infra.logger import configure_logging
 from app.infra.mysql_client import database
 from app.infra.request_logging import RequestLoggingMiddleware
+from app.retrieval import build_vector_store
 
 
 def create_app() -> FastAPI:
@@ -28,6 +29,12 @@ def create_app() -> FastAPI:
     @app.get("/health/db")
     async def database_health() -> dict[str, bool]:
         return {"ok": await database.healthcheck()}
+
+    @app.get("/health/ready")
+    async def readiness() -> dict:
+        db_ok = await database.healthcheck()
+        vector_ok = await build_vector_store().healthcheck()
+        return {"ok": db_ok and vector_ok, "database": db_ok, "vector_store": vector_ok}
 
     return app
 

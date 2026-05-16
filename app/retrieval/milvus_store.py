@@ -107,6 +107,10 @@ class MilvusVectorStore(VectorStore):
         self._collection = None
         return 0
 
+    async def healthcheck(self) -> bool:
+        self._get_collection()
+        return True
+
     def _get_collection(self):
         if self._collection is not None:
             return self._collection

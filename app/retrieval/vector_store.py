@@ -30,3 +30,7 @@ class VectorStore(ABC):
     @abstractmethod
     async def clear(self) -> int:
         raise NotImplementedError
+
+    async def healthcheck(self) -> bool:
+        await self.list_documents()
+        return True
