@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     embedding_dim: int = 384
     retrieval_top_k: int = 20
     rerank_top_k: int = 5
+    reranker_provider: str = "lightweight"
+    rerank_model_path: str = "BAAI/bge-reranker-v2-m3"
+    rerank_use_fp16: bool = False
     min_relevance_score: float = 0.05
     context_max_tokens: int = 3000
     context_min_chunk_tokens: int = 80
@@ -94,6 +97,14 @@ class Settings(BaseSettings):
         normalized = value.strip().lower()
         if normalized not in {"hash", "bge-m3"}:
             raise ValueError("unsupported embedding provider, expected one of: hash, bge-m3")
+        return normalized
+
+    @field_validator("reranker_provider")
+    @classmethod
+    def _normalize_reranker_provider(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if normalized not in {"lightweight", "bge"}:
+            raise ValueError("unsupported reranker provider, expected one of: lightweight, bge")
         return normalized
 
     @model_validator(mode="after")

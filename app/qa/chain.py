@@ -12,7 +12,7 @@ from app.qa.citation import bind_answer_citations
 from app.qa.context_builder import ContextBuilder
 from app.qa.filter_extractor import extract_query_filters, merge_filters
 from app.qa.query_rewriter import QueryRewriter
-from app.retrieval import LightweightReranker, VectorStore, build_vector_store
+from app.retrieval import LightweightReranker, VectorStore, build_reranker, build_vector_store
 
 
 @dataclass
@@ -31,7 +31,7 @@ class RAGChain:
     ) -> None:
         self.embedder = embedder or build_embedder()
         self.vector_store = vector_store or build_vector_store()
-        self.reranker = reranker or LightweightReranker()
+        self.reranker = reranker or build_reranker()
         self.llm = llm or LLMClient()
         self.query_rewriter = QueryRewriter(llm=self.llm)
         self.context_builder = ContextBuilder()
