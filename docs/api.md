@@ -9,6 +9,10 @@
 
 返回可选数据库后端健康状态。未配置 MySQL 时使用本地 no-op 后端并返回 `ok: true`。
 
+## `GET /v1/config`
+
+返回非敏感运行配置,用于部署后确认检索、向量库、模型 provider 和上下文预算参数。
+
 ## `POST /v1/ingest`
 
 Multipart form:
