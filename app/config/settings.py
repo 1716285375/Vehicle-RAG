@@ -1,8 +1,10 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+SUPPORTED_VECTOR_STORES = {"json", "faiss", "milvus"}
 
 
 class Settings(BaseSettings):
@@ -40,6 +42,52 @@ class Settings(BaseSettings):
     milvus_host: str = "localhost"
     milvus_port: int = 19530
     milvus_collection: str = "vehicle_kb"
+
+    @field_validator(
+        "app_port",
+        "embedding_dim",
+        "retrieval_top_k",
+        "rerank_top_k",
+        "context_max_tokens",
+        "context_min_chunk_tokens",
+        "qa_cache_ttl",
+        "embedding_cache_ttl",
+        "milvus_port",
+    )
+    @classmethod
+    def _must_be_positive(cls, value: int) -> int:
+        if value <= 0:
+            raise ValueError("must be greater than 0")
+        return value
+
+    @field_validator("llm_timeout")
+    @classmethod
+    def _timeout_must_be_positive(cls, value: float) -> float:
+        if value <= 0:
+            raise ValueError("must be greater than 0")
+        return value
+
+    @field_validator("min_relevance_score")
+    @classmethod
+    def _score_must_be_non_negative(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("must be greater than or equal to 0")
+        return value
+
+    @field_validator("vector_store")
+    @classmethod
+    def _normalize_vector_store(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if normalized not in SUPPORTED_VECTOR_STORES:
+            allowed = ", ".join(sorted(SUPPORTED_VECTOR_STORES))
+            raise ValueError(f"unsupported vector store '{value}', expected one of: {allowed}")
+        return normalized
+
+    @model_validator(mode="after")
+    def _validate_context_budget(self) -> "Settings":
+        if self.context_min_chunk_tokens > self.context_max_tokens:
+            raise ValueError("context_min_chunk_tokens cannot exceed context_max_tokens")
+        return self
 
 
 @lru_cache
