@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.config import router as config_router
+from app.api.errors import register_error_handlers
 from app.api.ingest import router as ingest_router
 from app.api.knowledge import router as knowledge_router
 from app.api.qa import router as qa_router
@@ -16,6 +17,7 @@ def create_app() -> FastAPI:
     configure_logging()
     app = FastAPI(title=settings.app_name, version="0.1.0")
     app.add_middleware(RequestLoggingMiddleware)
+    register_error_handlers(app)
     app.include_router(config_router, prefix="/v1", tags=["config"])
     app.include_router(qa_router, prefix="/v1", tags=["qa"])
     app.include_router(ingest_router, prefix="/v1", tags=["ingest"])

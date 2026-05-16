@@ -1,5 +1,11 @@
 # API
 
+错误响应统一为:
+
+```json
+{"error":{"code":"validation_error","message":"Request validation failed","details":[]}}
+```
+
 ## `GET /health`
 
 返回服务健康状态。
